@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Parrallax : MonoBehaviour
 {
-    [Range(0, 1)][SerializeField] float parallaxMultiplierX, parallaxMultiplierY;
+    [Range(-1, 1)][SerializeField] float parallaxMultiplierX, parallaxMultiplierY;
     [SerializeField] bool repeatX;
     [SerializeField] bool repeatY;
 

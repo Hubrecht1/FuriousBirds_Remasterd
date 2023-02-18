@@ -2,16 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pig : MonoBehaviour
+public class Crate : MonoBehaviour
 {
-    Rigidbody2D Rb2D;
     [SerializeField] float maxForce;
+    [SerializeField] Rigidbody2D RB2D;
 
-    float momentum;
 
-    void Awake()
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        Rb2D = gameObject.GetComponent<Rigidbody2D>();
+
+        if (ShouldDieFromCollision(collision, maxForce))
+        {
+            DestroyThisObject();
+        }
+
+
+
 
     }
 
@@ -20,7 +26,7 @@ public class Pig : MonoBehaviour
         if (collision.rigidbody == null)
         {
 #if DEBUG
-        Debug.Log("No rigidbody: "+(collision.relativeVelocity.magnitude * collision.otherRigidbody.mass));
+        Debug.Log("No RigidBody" + (collision.relativeVelocity.magnitude * collision.otherRigidbody.mass));
 #endif
 
             return collision.relativeVelocity.magnitude * collision.otherRigidbody.mass > _maxForce;
@@ -37,31 +43,15 @@ public class Pig : MonoBehaviour
             direction.Normalize();
             return Mathf.Abs((collision.rigidbody.velocity.magnitude * collision.rigidbody.mass) - (collision.otherRigidbody.velocity.magnitude * collision.otherRigidbody.mass)) > (direction.magnitude * _maxForce);
 
+
         }
 
     }
-
-
-    private bool BirdTouched(Collision collision)
+    void DestroyThisObject()
     {
-        return true;
+
+
+        gameObject.SetActive(false);
 
     }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (ShouldDieFromCollision(collision, maxForce))
-        {
-            Die();
-        }
-
-    }
-
-
-
-    public void Die()
-    {
-        Destroy(this.gameObject);
-    }
-
 }

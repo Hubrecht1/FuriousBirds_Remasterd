@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class Bird : MonoBehaviour
 {
-    Vector2 _startPosition;
+    [Header("Bird")]
     [SerializeField] float force;
     [SerializeField] float maxdragDistance = 2;
-    public float momentum;
-    Rigidbody2D Rb2D;
 
-    public bool fired = false;
+    Rigidbody2D Rb2D;
+    Collider2D C2D;
+    public bool abilityActivated = false;
+
+    [HideInInspector] public Vector2 _startPosition;
+    [HideInInspector] public bool fired = false;
+
     public bool firstCollision = false;
+
+
 
     private void Awake()
     {
         Rb2D = GetComponent<Rigidbody2D>();
+        C2D = GetComponent<Collider2D>();
 
     }
+
 
     void Start()
     {
@@ -26,15 +34,22 @@ public class Bird : MonoBehaviour
 
     }
 
-    public float GetMomentum()
+
+
+    public float GetMomentum(Collision2D collision)
     {
-        momentum = Rb2D.mass * Rb2D.velocity.magnitude;
-        return momentum;
+
+        return collision.relativeVelocity.magnitude * collision.rigidbody.mass;
     }
+
+
+
 
     private void OnMouseUp()
     {
-        if (fired == false)
+
+
+        if (!fired)
         {
 
             Vector2 currentPosition = Rb2D.position;
@@ -43,11 +58,15 @@ public class Bird : MonoBehaviour
             direction.Normalize();
             Rb2D.isKinematic = false;
             Rb2D.AddForce(direction * force * distance);
+
             fired = true;
+
 
         }
 
+
     }
+
 
     private void OnMouseDrag()
     {
@@ -89,8 +108,12 @@ public class Bird : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        firstCollision = true;
-        this.enabled = false;
+        if (fired)
+        {
+            firstCollision = true;
+            this.enabled = false;
+        }
+
     }
 
     private void FixedUpdate()
@@ -116,14 +139,7 @@ public class Bird : MonoBehaviour
 
     bool IsBetween(float value, float bound1, float bound2)
     {
-        if (value >= bound1 && value <= bound2)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return value >= bound1 && value <= bound2;
     }
 
 }
